@@ -9,7 +9,7 @@ and all folders, in maildir format to a tar file.
 ```
   Usage: imaptar <flags>
   
-  Flags:\n\n" +
+  Flags:
     -server <name>   IMAPS server name
     -port <port>     IMAPS server port (default 993)
     -user <name>     username
