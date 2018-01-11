@@ -1,0 +1,11 @@
+Source: imaptar
+Section: admin
+Priority: extra
+Maintainer: XS4ALL Unixbeheer <unixbeheer@xs4all.net>
+Uploaders: Miquel van Smoorenburg (XS4ALL) <mikevs@xs4all.net>
+Build-Depends: debhelper (>= 9), golang-go (>= 2:1.7~0)
+Standards-Version: 3.9.1
+
+Package: imaptar
+Architecture: any
+Description: dump imap mailbox to tarfile

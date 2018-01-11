@@ -1,0 +1,17 @@
+#! /usr/bin/make -f
+
+GOVERSION := $(shell go version | sed -ne 's/^.* go\([0-9][^ ]\+\)\+.*$$/\1/p')
+GOMINVERSION = 1.7
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	@if dpkg --compare-versions $(GOVERSION) lt $(GOMINVERSION); then \
+		echo "Need at least Go version $(GOMINVERSION) (installed $(GOVERSION))"; \
+		exit 1; fi
+	go build
+
+override_dh_auto_clean:
+	rm -f imaptar
+
