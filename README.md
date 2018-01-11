@@ -6,7 +6,8 @@ and all folders, in maildir format to a tar file.
 
 ## Usage:
 
-  Usage: imaptar <flags>\n\n" +
+```
+  Usage: imaptar <flags>
   
   Flags:\n\n" +
     -server <name>   IMAPS server name
@@ -14,6 +15,13 @@ and all folders, in maildir format to a tar file.
     -user <name>     username
     -pass <pass>     password
     -tar <file>      tar output filename
+```
+
+## Example
+
+```
+imaptar -server imap.xs4all.nl -user mikevs -pass trustno1 -tar output.tar
+```
 
 ## BUGS
 
@@ -21,11 +29,14 @@ Only works on IMAP servers where "/" is the folder seperator.
 
 ## Building
 
+```
 $ go get
 $ go build
+```
 
 ## Building a debian package
 
+```
 $ dpkg-buildpackage -rfakeroot -us -uc
-
+```
 
