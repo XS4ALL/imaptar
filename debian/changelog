@@ -1,3 +1,9 @@
+imaptar (1.1) jessie stretch; urgency=low
+
+  * fix race condition in listing / acting on folders.
+
+ -- Miquel van Smoorenburg (XS4ALL) <mikevs@xs4all.net>  Fri, 12 Jan 2018 13:28:24 +0100
+
 imaptar (1.0) jessie stretch; urgency=low
 
   * initial release

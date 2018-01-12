@@ -68,13 +68,21 @@ func main() {
 	log.Println("Logged in")
 
 	// List mailboxes
-	mailboxes := make(chan *imap.MailboxInfo, 10)
+	var mailboxes []*imap.MailboxInfo
+	mailboxchan := make(chan *imap.MailboxInfo, 10)
 	done := make(chan error, 1)
 	go func () {
-		done <- c.List("", "*", mailboxes)
+		done <- c.List("", "*", mailboxchan)
 	}()
+	for m := range mailboxchan {
+		mailboxes = append(mailboxes, m)
+	}
+	if err := <-done; err != nil {
+		log.Fatal(err)
+	}
 
-	for m := range mailboxes {
+	// and dump them
+	for _, m := range mailboxes {
 		dumpFolder(*serverName, *userName, c, m.Name, tw)
 	}
 }
