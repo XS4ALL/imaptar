@@ -1,3 +1,13 @@
+imaptar (1.3) jessie stretch; urgency=low
+
+  * switch options to unix standard instead of go standard.
+  * prompt for password
+  * add -E, --envvar option to get password from an environment variable
+  * add -z, --gzip option
+  * outputfile '-' means 'stdout'
+
+ -- Miquel van Smoorenburg (XS4ALL) <mikevs@xs4all.net>  Sat, 13 Jan 2018 22:25:00 +0100
+
 imaptar (1.2) jessie stretch; urgency=low
 
   * fix "after running imaptar all messages are marked as read" bug.

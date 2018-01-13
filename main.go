@@ -10,6 +10,9 @@ import (
 	"flag"
 	"archive/tar"
 
+	"github.com/klauspost/pgzip"
+	"rsc.io/getopt"
+	"github.com/bgentry/speakeasy"
 	"github.com/emersion/go-imap/client"
 	"github.com/emersion/go-imap"
 )
@@ -18,32 +21,77 @@ func usage() {
 	fmt.Fprintln(os.Stderr,
 	"\nUsage: imaptar <flags>\n\n" +
 	"Flags:\n\n" +
-	"    -server <name>   IMAPS server name\n" +
-	"    -port <port>     IMAPS server port (default 993)\n" +
-	"    -user <name>     username\n" +
-	"    -pass <pass>     password\n" +
-	"    -tar <file>      tar output filename\n")
+	"    -s, --server <name>   IMAPS server name\n" +
+	"    -u, --user <name>     username\n" +
+	"    -t, --tar <file>      tar output filename\n\n" +
+	"Optional flags:\n\n" +
+	"    -p, --port <port>     IMAPS server port (default 993)\n" +
+	"    -P, --pass <pass>     password\n" +
+	"    -E, --envpass VAR     get password from environment var $VAR\n" +
+	"    -z, --gzip            compress the output\n")
 	os.Exit(1)
 }
 
 func main() {
 
-	serverName := flag.String("server", "", "IMAPS server name")
-	serverPort := flag.String("port", "993", "IMAPS server port")
-	userName := flag.String("user", "", "username")
-	password := flag.String("pass", "", "password")
-	tarfile := flag.String("tar", "", "generated tar filename")
-	flag.Parse()
+	serverName := flag.String("server", "", "")
+	serverPort := flag.String("port", "993", "")
+	userName := flag.String("user", "", "")
+	password := flag.String("pass", "", "")
+	tarfile := flag.String("tar", "", "")
+	envpass := flag.String("envpass", "", "")
+	dogzip := flag.Bool("gzip", false, "")
 
-	if *serverName == "" || *userName == "" || *password == "" || *tarfile == "" {
+	getopt.Aliases(
+		"s", "server",
+		"p", "port",
+		"u", "user",
+		"P", "pass",
+		"t", "tar",
+		"z", "gzip",
+		"E", "envpass",
+	)
+
+	flag.Usage = usage
+	getopt.Parse()
+
+	if *serverName == "" || *userName == "" || *tarfile == "" {
 		usage()
 	}
 
-	file, err := os.OpenFile(*tarfile, os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		log.Fatal(err)
+	if *password == "" && *envpass != "" {
+		p := os.Getenv(*envpass)
+		if p == "" {
+			log.Fatalf("environment var %s not set", *envpass)
+		}
+		password = &p
 	}
+
+	if *password == "" {
+		p, err := speakeasy.Ask("Password: ")
+		if err != nil {
+			log.Fatal(err)
+		}
+		password = &p
+	}
+
+	var file io.WriteCloser
+	var err error
+	if *tarfile == "-" {
+		file = os.Stdout
+	} else {
+		file, err = os.OpenFile(*tarfile, os.O_RDWR|os.O_CREATE, 0644)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	if *dogzip {
+		file = pgzip.NewWriter(file)
+	}
+	defer file.Close()
+
 	tw := tar.NewWriter(file)
+	defer tw.Close()
 
 	// Connect to server
 	log.Println("Connecting to server...")
