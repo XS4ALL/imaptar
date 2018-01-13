@@ -21,10 +21,14 @@ Optional flags:
     -z, --gzip            compress the output
 ```
 
+If you do not supply the -P or -E option, you will be prompted
+for the password.
+
 ## Example
 
 ```
-imaptar -server imap.xs4all.nl -user mikevs -pass trustno1 -tar output.tar
+export IMAPPASS="TrustNo1"
+imaptar -s imap.xs4all.nl -u mikevs -E IMAPPASS -z -t maildir.tar.gz
 ```
 
 ## BUGS
