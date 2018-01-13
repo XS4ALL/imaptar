@@ -1,3 +1,9 @@
+imaptar (1.2) jessie stretch; urgency=low
+
+  * fix "after running imaptar all messages are marked as read" bug.
+
+ -- Miquel van Smoorenburg (XS4ALL) <mikevs@xs4all.net>  Sat, 13 Jan 2018 15:30:51 +0100
+
 imaptar (1.1) jessie stretch; urgency=low
 
   * fix race condition in listing / acting on folders.

@@ -165,23 +165,23 @@ func dumpFolder(serverName string, userName string, c *client.Client, folderName
 	seqset := new(imap.SeqSet)
 	seqset.AddRange(from, to)
 
-	messages := make(chan *imap.Message, 10)
-	done := make(chan error, 1)
-	go func() {
-		done <- c.Fetch(seqset, []imap.FetchItem{
-					imap.FetchFlags,
-					imap.FetchRFC822,
-					imap.FetchInternalDate,
-					imap.FetchUid,
-					imap.FetchRFC822Size}, messages)
-	}()
-
 	entireBody := imap.BodySectionName{
 		BodyPartName:	imap.BodyPartName{
 			Specifier:	imap.EntireSpecifier,
 		},
 		Peek:		true,
 	}
+
+	messages := make(chan *imap.Message, 10)
+	done := make(chan error, 1)
+	go func() {
+		done <- c.Fetch(seqset, []imap.FetchItem{
+					entireBody.FetchItem(),
+					imap.FetchFlags,
+					imap.FetchInternalDate,
+					imap.FetchUid,
+					imap.FetchRFC822Size}, messages)
+	}()
 
 	for msg := range messages {
 		fn := fmt.Sprintf("%d.%d_0.%s:2,%s",
