@@ -163,15 +163,14 @@ func dumpFolder(serverName string, userName string, c *client.Client, folderName
 	log.Printf("Selected %s, %d msgs",
 		folderName, mbox.Messages)
 
-	if folderName == "INBOX" {
-		folderName = ""
-	} else {
-		folderName = "." + strings.Replace(folderName, "/", ".", -1) + "/"
+	folderPath := ""
+	if folderName != "INBOX" {
+		folderPath = "." + strings.Replace(folderName, "/", ".", -1) + "/"
 	}
 
 	now := time.Now()
 	hdr := tar.Header{
-		Name:		folderName,
+		Name:		folderPath,
 		Mode:		0755,
 		Size:		0,
 		Typeflag:	tar.TypeDir,
@@ -181,23 +180,23 @@ func dumpFolder(serverName string, userName string, c *client.Client, folderName
 		AccessTime:	now,
 		ChangeTime:	now,
 	}
-	if folderName != "" {
+	if folderPath != "" {
 		err = tw.WriteHeader(&hdr)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
-	hdr.Name = folderName + "new/"
+	hdr.Name = folderPath + "new/"
 	err = tw.WriteHeader(&hdr)
 	if err != nil {
 		log.Fatal(err)
 	}
-	hdr.Name = folderName + "tmp/"
+	hdr.Name = folderPath + "tmp/"
 	err = tw.WriteHeader(&hdr)
 	if err != nil {
 		log.Fatal(err)
 	}
-	hdr.Name = folderName + "cur/"
+	hdr.Name = folderPath + "cur/"
 	err = tw.WriteHeader(&hdr)
 	if err != nil {
 		log.Fatal(err)
@@ -236,8 +235,12 @@ func dumpFolder(serverName string, userName string, c *client.Client, folderName
 			msg.InternalDate.Unix(), msg.Uid,
 			serverName, mapFlags(msg.Flags))
 		lit := msg.GetBody(&entireBody)
+		if lit == nil {
+			log.Printf("%s: uid %d: failed to retrieve body", folderName, msg.Uid)
+			continue
+		}
 		hdr := tar.Header{
-			Name:		folderName + "cur/" + fn,
+			Name:		folderPath + "cur/" + fn,
 			Mode:		0644,
 			Size:		int64(msg.Size),
 			Typeflag:	tar.TypeReg,

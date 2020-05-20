@@ -1,3 +1,10 @@
+imaptar (1.4) stretch buster; urgency=low
+
+  * check return value of msg.GetBody(&entireBody), it's nil on error.
+  * add gp.mod file.
+
+ -- Miquel van Smoorenburg (XS4ALL) <mikevs@xs4all.net>  Wed, 20 May 2020 16:03:59 +0200
+
 imaptar (1.3) jessie stretch; urgency=low
 
   * switch options to unix standard instead of go standard.
