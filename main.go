@@ -242,7 +242,7 @@ func dumpFolder(serverName string, userName string, c *client.Client, folderName
 		hdr := tar.Header{
 			Name:		folderPath + "cur/" + fn,
 			Mode:		0644,
-			Size:		int64(msg.Size),
+			Size:		int64(lit.Len()),
 			Typeflag:	tar.TypeReg,
 			Uname:		userName,
 			Gname:		userName,
